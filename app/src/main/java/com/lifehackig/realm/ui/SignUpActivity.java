@@ -12,6 +12,7 @@ import android.widget.EditText;
 import com.lifehackig.realm.R;
 import com.lifehackig.realm.RealmApplication;
 import com.lifehackig.realm.UserManager;
+import com.lifehackig.realm.model.Photo;
 import com.lifehackig.realm.model.User;
 
 import java.io.ByteArrayOutputStream;
@@ -110,6 +111,14 @@ public class SignUpActivity extends AppCompatActivity{
                 byte[] byteArray = stream.toByteArray();
 
                 user.setProfileImage(byteArray);
+
+                Photo realmPhoto = realm.createObject(Photo.class);
+                realmPhoto.setImage(byteArray);
+                user.addToPhotoStream(realmPhoto);
+                user.addToPhotoStream(realmPhoto);
+                user.addToPhotoStream(realmPhoto);
+                user.addToPhotoStream(realmPhoto);
+                user.addToPhotoStream(realmPhoto);
             }
         });
     }
