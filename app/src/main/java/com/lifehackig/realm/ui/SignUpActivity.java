@@ -1,6 +1,9 @@
 package com.lifehackig.realm.ui;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -10,6 +13,8 @@ import com.lifehackig.realm.R;
 import com.lifehackig.realm.RealmApplication;
 import com.lifehackig.realm.UserManager;
 import com.lifehackig.realm.model.User;
+
+import java.io.ByteArrayOutputStream;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -97,6 +102,14 @@ public class SignUpActivity extends AppCompatActivity{
             public void execute(Realm realm){
                 User user = realm.createObject(User.class, currentUser.getIdentity());
                 user.setUsername(username);
+
+                Drawable d = getResources().getDrawable(R.drawable.testimage);
+                Bitmap bitmap = ((BitmapDrawable)d).getBitmap();
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                byte[] byteArray = stream.toByteArray();
+
+                user.setProfileImage(byteArray);
             }
         });
     }
