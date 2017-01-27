@@ -12,10 +12,6 @@ public class User extends RealmObject{
     private String uid;
     private String username;
 
-    public void setUid(String uid) {
-        this.uid = uid;
-    }
-
     public void setUsername(String username) {
         this.username = username;
     }
