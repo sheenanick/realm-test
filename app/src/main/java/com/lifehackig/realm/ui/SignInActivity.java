@@ -17,6 +17,8 @@ import io.realm.ObjectServerError;
 import io.realm.SyncCredentials;
 import io.realm.SyncUser;
 
+import static android.text.TextUtils.isEmpty;
+
 public class SignInActivity extends AppCompatActivity {
     @BindView(R.id.username) EditText usernameView;
     @BindView(R.id.password) EditText passwordView;
@@ -42,32 +44,35 @@ public class SignInActivity extends AppCompatActivity {
 
     @OnClick(R.id.signIn)
     public void attemptSignIn() {
+        usernameView.setError(null);
+        passwordView.setError(null);
+
         final String username = usernameView.getText().toString().trim();
         final String password = passwordView.getText().toString().trim();
 
-        SyncUser.loginAsync(SyncCredentials.usernamePassword(username, password, false), RealmApplication.AUTH_URL, new SyncUser.Callback() {
-            @Override
-            public void onSuccess(SyncUser user) {
-                loginComplete(user);
-            }
+        boolean cancel = false;
+        if (isEmpty(username)) {
+            usernameView.setError("This field is required");
+            cancel = true;
+        }
+        if (isEmpty(password)) {
+            passwordView.setError("This field is required");
+            cancel = true;
+        }
 
-            @Override
-            public void onError(ObjectServerError error) {
-                String errorMsg;
-                switch (error.getErrorCode()) {
-                    case UNKNOWN_ACCOUNT:
-                        errorMsg = "Account does not exists.";
-                        break;
-                    case INVALID_CREDENTIALS:
-                        errorMsg = "The provided credentials are invalid!"; // This message covers also expired account token
-                        break;
-                    default:
-                        errorMsg = error.toString();
+        if (!cancel) {
+            SyncUser.loginAsync(SyncCredentials.usernamePassword(username, password, false), RealmApplication.AUTH_URL, new SyncUser.Callback() {
+                @Override
+                public void onSuccess(SyncUser user) {
+                    loginComplete(user);
                 }
-                Toast.makeText(SignInActivity.this, errorMsg, Toast.LENGTH_LONG).show();
-            }
-        });
-
+                @Override
+                public void onError(ObjectServerError error) {
+                    String errorMsg = error.toString();
+                    Toast.makeText(SignInActivity.this, errorMsg, Toast.LENGTH_LONG).show();
+                }
+            });
+        }
     }
 
     @OnClick(R.id.signUp)
