@@ -69,18 +69,13 @@ public class SignUpActivity extends AppCompatActivity{
             SyncUser.loginAsync(SyncCredentials.usernamePassword(username, password, true), RealmApplication.AUTH_URL, new SyncUser.Callback() {
                 @Override
                 public void onSuccess(SyncUser user) {
-                    Log.d("success", "onSuccess");
                     signUpComplete(user);
                 }
                 @Override
                 public void onError(ObjectServerError error) {
-                    String errorMsg;
-                    switch (error.getErrorCode()) {
-                        case EXISTING_ACCOUNT: errorMsg = "Account already exists"; break;
-                        default:
-                            errorMsg = error.toString();
-                    }
+                    String errorMsg = error.toString();
                     Log.d("error", errorMsg);
+                    usernameView.setError("Username already exists");
                 }
             });
         }
