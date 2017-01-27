@@ -19,11 +19,13 @@ import io.realm.Realm;
 import io.realm.SyncCredentials;
 import io.realm.SyncUser;
 
+import static android.text.TextUtils.isEmpty;
+
 
 public class SignUpActivity extends AppCompatActivity{
     @BindView(R.id.username) EditText usernameView;
     @BindView(R.id.password) EditText passwordView;
-    @BindView(R.id.confirmPassword) EditText confirmPasswordView;
+    @BindView(R.id.confirmPassword) EditText passwordConfirmationView;
 
     private Realm realm;
     private String username;
@@ -37,26 +39,51 @@ public class SignUpActivity extends AppCompatActivity{
 
     @OnClick(R.id.signUp)
     public void attemptSignUp() {
+        usernameView.setError(null);
+        passwordView.setError(null);
+        passwordConfirmationView.setError(null);
+
         username = usernameView.getText().toString();
         String password = passwordView.getText().toString();
+        String passwordConfirmation = passwordConfirmationView.getText().toString();
 
-        SyncUser.loginAsync(SyncCredentials.usernamePassword(username, password, true), RealmApplication.AUTH_URL, new SyncUser.Callback() {
-            @Override
-            public void onSuccess(SyncUser user) {
-                Log.d("success", "onSuccess");
-                signUpComplete(user);
-            }
-            @Override
-            public void onError(ObjectServerError error) {
-                String errorMsg;
-                switch (error.getErrorCode()) {
-                    case EXISTING_ACCOUNT: errorMsg = "Account already exists"; break;
-                    default:
-                        errorMsg = error.toString();
+        boolean cancel = false;
+        if (isEmpty(username)) {
+            usernameView.setError("This field is required");
+            cancel = true;
+        }
+        if (isEmpty(password)) {
+            passwordView.setError("This field is required");
+            cancel = true;
+        }
+        if (isEmpty(passwordConfirmation)) {
+            passwordConfirmationView.setError("This field is required");
+            cancel = true;
+        }
+        if (!password.equals(passwordConfirmation)) {
+            passwordConfirmationView.setError("Passwords do not match");
+            cancel = true;
+        }
+
+        if (!cancel) {
+            SyncUser.loginAsync(SyncCredentials.usernamePassword(username, password, true), RealmApplication.AUTH_URL, new SyncUser.Callback() {
+                @Override
+                public void onSuccess(SyncUser user) {
+                    Log.d("success", "onSuccess");
+                    signUpComplete(user);
                 }
-                Log.d("error", errorMsg);
-            }
-        });
+                @Override
+                public void onError(ObjectServerError error) {
+                    String errorMsg;
+                    switch (error.getErrorCode()) {
+                        case EXISTING_ACCOUNT: errorMsg = "Account already exists"; break;
+                        default:
+                            errorMsg = error.toString();
+                    }
+                    Log.d("error", errorMsg);
+                }
+            });
+        }
     }
 
     private void signUpComplete(SyncUser user) {
