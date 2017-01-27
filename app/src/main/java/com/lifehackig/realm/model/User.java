@@ -11,9 +11,14 @@ public class User extends RealmObject{
     @PrimaryKey
     private String uid;
     private String username;
+    private byte[] profileImage;
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public void setProfileImage(byte[] profileImage) {
+        this.profileImage = profileImage;
     }
 
     public String getUid() {
@@ -22,6 +27,10 @@ public class User extends RealmObject{
 
     public String getUsername() {
         return username;
+    }
+
+    public byte[] getProfileImage() {
+        return profileImage;
     }
 
 }
