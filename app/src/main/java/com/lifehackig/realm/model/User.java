@@ -23,6 +23,10 @@ public class User extends RealmObject{
         this.profileImage = profileImage;
     }
 
+    public void addToPhotoStream(Photo photo) {
+        photoStream.add(photo);
+    }
+
     public String getUid() {
         return uid;
     }
