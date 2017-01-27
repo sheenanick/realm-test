@@ -5,6 +5,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -13,15 +15,19 @@ import android.widget.TextView;
 
 import com.lifehackig.realm.R;
 import com.lifehackig.realm.UserManager;
+import com.lifehackig.realm.adapter.PhotoStreamRecyclerViewAdapter;
+import com.lifehackig.realm.model.Photo;
 import com.lifehackig.realm.model.User;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.Realm;
+import io.realm.RealmList;
 
 public class MainActivity extends AppCompatActivity {
     @BindView(R.id.textView) TextView textView;
     @BindView(R.id.profileImageView) ImageView profileImageView;
+    @BindView(R.id.recyclerView) RecyclerView recyclerView;
     private Realm realm;
 
     @Override
@@ -38,7 +44,15 @@ public class MainActivity extends AppCompatActivity {
             byte[] byteArray = user.getProfileImage();
             Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
             profileImageView.setImageBitmap(bmp);
+
+            setupRecyclerView(user.getPhotoStream());
         }
+    }
+
+    private void setupRecyclerView(RealmList<Photo> photostream) {
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(new PhotoStreamRecyclerViewAdapter(this, photostream));
+        recyclerView.setHasFixedSize(true);
     }
 
     @Override
