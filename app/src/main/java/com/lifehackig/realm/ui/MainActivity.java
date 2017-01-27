@@ -1,11 +1,14 @@
 package com.lifehackig.realm.ui;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.lifehackig.realm.R;
@@ -18,6 +21,7 @@ import io.realm.Realm;
 
 public class MainActivity extends AppCompatActivity {
     @BindView(R.id.textView) TextView textView;
+    @BindView(R.id.profileImageView) ImageView profileImageView;
     private Realm realm;
 
     @Override
@@ -28,8 +32,12 @@ public class MainActivity extends AppCompatActivity {
 
         realm = Realm.getDefaultInstance();
         User user = realm.where(User.class).equalTo("uid", UserManager.getCurrentUserId()).findFirst();
-        if (user.getUsername()!= null) {
+        if (user != null) {
             textView.setText(user.getUsername());
+
+            byte[] byteArray = user.getProfileImage();
+            Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+            profileImageView.setImageBitmap(bmp);
         }
     }
 
